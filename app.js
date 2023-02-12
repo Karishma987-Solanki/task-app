@@ -1,6 +1,10 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express");
 const connection = require("./config/connection");
 const authRoute = require("./views/auth");
+const userRoute = require("./views/user");
 const taskRoute = require("./views/task");
 
 const app = express();
@@ -12,6 +16,7 @@ app.get("/", function (req, res) {
 });
 
 app.use(authRoute);
+app.use(userRoute);
 app.use(taskRoute);
 
 connection.init();

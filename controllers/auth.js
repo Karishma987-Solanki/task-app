@@ -1,9 +1,11 @@
 const models = require("../models/auth");
+const { getUser } = require("../models/user");
+const jwt = require("jsonwebtoken");
 
 const signupUser = async (req, res) => {
   const { first_name, last_name, email, password } = req.body;
   try {
-    const user = await models.getUser(email);
+    const user = await getUser(email);
 
     if (user) {
       return res.json({ result: "User already registered!" });
@@ -19,7 +21,7 @@ const signupUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await models.getUser(email);
+    const user = await getUser(email);
 
     if (!user) {
       return res.json({ result: "User not found!" });
@@ -28,7 +30,11 @@ const loginUser = async (req, res) => {
       return res.json({ result: "Invalid Password!" });
     }
 
-    res.json({ result: "login successful", token: "" });
+    const token = jwt.sign({ email: user.email }, process.env.TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.json({ result: "login successful", token });
   } catch (error) {
     res.json({ result: "login failed" });
   }
@@ -40,7 +46,7 @@ const forgotPassword = async (req, res) => {
     if (new_password !== confirm_password) {
       return res.json({ result: "Mismatch in new and confirm password!" });
     }
-    const user = await models.getUser(email);
+    const user = await getUser(email);
 
     if (!user) {
       return res.json({ result: "User not found!" });
@@ -56,24 +62,8 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-const getUserdetails = async (req, res) => {
-  const { token, email } = req.query;
-  try {
-    const user = await models.getUser(email);
-
-    if (!user) {
-      return res.json({ result: "User not found!" });
-    }
-
-    res.json({ result: "User details fetched", user });
-  } catch (error) {
-    res.json({ result: "Failed" });
-  }
-};
-
 module.exports = {
   signupUser,
   loginUser,
   forgotPassword,
-  getUserdetails,
 };
