@@ -3,16 +3,17 @@ dotenv.config();
 
 const express = require("express");
 const connection = require("./config/connection");
-const authRoute = require("./views/auth");
-const userRoute = require("./views/user");
-const taskRoute = require("./views/task");
+const authRoute = require("./routes/auth");
+const userRoute = require("./routes/user");
+const taskRoute = require("./routes/task");
 
 const app = express();
 
+app.set("view engine", "ejs");
 app.use(express.json());
 
 app.get("/", function (req, res) {
-  res.json({ result: "Hello World!" });
+  res.render("index");
 });
 
 app.use(authRoute);
