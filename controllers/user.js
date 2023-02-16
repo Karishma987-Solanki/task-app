@@ -1,15 +1,9 @@
 const models = require("../models/user");
-const jwt = require("jsonwebtoken");
 
 const getUserdetails = async (req, res) => {
-  const { token } = req.query;
+  const { email } = req.user;
   try {
-    const userFromToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    if (!userFromToken) {
-      return res.json({ result: "Invalid Token!" });
-    }
-
-    const user = await models.getUser(userFromToken.email);
+    const user = await models.getUser(email);
 
     if (!user) {
       return res.json({ result: "User not found!" });

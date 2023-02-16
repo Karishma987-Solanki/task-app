@@ -5,11 +5,12 @@ const {
   updateTask,
   deleteTask,
 } = require("../controllers/task");
+const { isLoggedIn } = require("../middleware/isLoggedIn");
 const router = express();
 
-router.get("/task", fetchTask);
-router.post("/task", createTask);
-router.put("/task", updateTask);
-router.delete("/task", deleteTask);
+router.get("/task", isLoggedIn, fetchTask);
+router.post("/task", isLoggedIn, createTask);
+router.put("/task/:id", isLoggedIn, updateTask);
+router.delete("/task/:id", isLoggedIn, deleteTask);
 
 module.exports = router;

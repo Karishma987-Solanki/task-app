@@ -1,16 +1,10 @@
 const models = require("../models/task");
 const { getUser } = require("../models/user");
-const jwt = require("jsonwebtoken");
 
 const fetchTask = async (req, res) => {
-  const { token } = req.query;
+  const { email } = req.user;
   try {
-    const userFromToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    if (!userFromToken) {
-      return res.json({ result: "Invalid Token!" });
-    }
-
-    const user = await getUser(userFromToken.email);
+    const user = await getUser(email);
 
     if (!user) {
       return res.json({ result: "User not found!" });
@@ -25,14 +19,10 @@ const fetchTask = async (req, res) => {
 };
 
 const createTask = async (req, res) => {
-  const { title, description, token } = req.body;
+  const { title, description } = req.body;
+  const { email } = req.user;
   try {
-    const userFromToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    if (!userFromToken) {
-      return res.json({ result: "Invalid Token!" });
-    }
-
-    const user = await getUser(userFromToken.email);
+    const user = await getUser(email);
 
     if (!user) {
       return res.json({ result: "User not found!" });
@@ -46,14 +36,11 @@ const createTask = async (req, res) => {
 };
 
 const updateTask = async (req, res) => {
-  const { title, description, id, token } = req.body;
+  const { title, description } = req.body;
+  const { id } = req.params;
+  const { email } = req.user;
   try {
-    const userFromToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    if (!userFromToken) {
-      return res.json({ result: "Invalid Token!" });
-    }
-
-    const user = await getUser(userFromToken.email);
+    const user = await getUser(email);
 
     if (!user) {
       return res.json({ result: "User not found!" });
@@ -67,14 +54,10 @@ const updateTask = async (req, res) => {
 };
 
 const deleteTask = async (req, res) => {
-  const { id, token } = req.query;
+  const { id } = req.params;
+  const { email } = req.user;
   try {
-    const userFromToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    if (!userFromToken) {
-      return res.json({ result: "Invalid Token!" });
-    }
-
-    const user = await getUser(userFromToken.email);
+    const user = await getUser(email);
 
     if (!user) {
       return res.json({ result: "User not found!" });
